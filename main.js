@@ -9,6 +9,7 @@ avata1.src = '/images/dino.png';
 let obstacle = new Image();
 obstacle.src = '/images/obstacle.png';
 
+
 let dino = {
 	x: 10,
 	y: 200,
@@ -21,7 +22,8 @@ let dino = {
 	},
 };
 
-class Cactus {
+
+class Cactus { //Obstacle 추후에 사용
 	constructor() {
 		this.x = 500;
 		this.y = 200;
@@ -40,54 +42,50 @@ let cactusArr = [];
 let jumpTimer = 0;
 let animation;
 let jump = false;
-let gameStarted = false; // 추가: 게임 시작 여부 확인
 
-function startGame() {
-	if (!gameStarted) {
-		gameStarted = true;
+function gameLoop() {
+	animation = requestAnimationFrame(gameLoop);
+	timer++;
 
-		function gameLoop() {
-			animation = requestAnimationFrame(gameLoop);
-			timer++;
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-			if (timer % 120 === 0) {
-				let cactus = new Cactus();
-				cactusArr.push(cactus);
-			}
-
-			cactusArr.forEach((el, i, o) => {
-				if (el.x + el.width < 0) {
-					o.splice(i, 1);
-				}
-				el.x--;
-
-				checkCollision(dino, el);
-
-				el.draw();
-			});
-
-			if (jump == true) {
-				dino.y -= 2;
-				jumpTimer++;
-			} else {
-				if (dino.y < 200) {
-					dino.y += 2;
-					jumpTimer = 0;
-				}
-			}
-
-			if (jumpTimer > 50) {
-				jump = false;
-			}
-
-			dino.draw();
-		}
-
-		gameLoop();
+	// 120 프레임마다 한번씩
+	if (timer % 120 === 0) {
+		let cactus = new Cactus();
+		cactusArr.push(cactus);
 	}
+
+	// el 장애물
+	cactusArr.forEach((el, i, o) => {
+		// x좌표가 0 미만이면 장애물 제거
+		if (el.x + el.width < 0) {
+			o.splice(i, 1);
+		}
+		el.x--;
+
+		checkCollision(dino, el);
+
+		el.draw();
+	});
+
+	if (jump == true) {
+		dino.y -= 2; // 점프 속도 조절
+		jumpTimer++;
+	}else{
+		if (dino.y < 200) {
+			dino.y+=2;
+			jumpTimer = 0;
+		}
+	}
+
+	if (jumpTimer > 50) {
+		jump = false;
+	}
+
+	dino.draw();
 }
+
+gameLoop();
 
 // 충돌
 function checkCollision(dino, cactus) {
@@ -97,15 +95,12 @@ function checkCollision(dino, cactus) {
 	if (xDiff < 0 && yDiff < 0) {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		cancelAnimationFrame(animation);
-		alert('게임 오버');
-		gameStarted = false; // 게임 종료 후 다시 시작 가능하도록 설정
+		alert('Game Over');
 	}
 }
 
-document.getElementById('startButton').addEventListener('click', startGame);
-
 document.addEventListener('keydown', function(e) {
-	if (e.code === 'Space' && dino.y >= 200) {
+	if (e.code === 'Space' && dino.y >= 200) { // 공룡이 땅에 있을 때만 점프
 		jump = true;
 	}
 });

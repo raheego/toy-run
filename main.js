@@ -10,98 +10,102 @@ let obstacle = new Image();
 obstacle.src = '/images/obstacle.png';
 
 let dino = {
-    x: 10,
-    y: 200,
-    width: 50,
-    height: 50,
-    draw() {
-        ctx.drawImage(avata1, this.x, this.y, this.width, this.height);
-    },
+	x: 10,
+	y: 200,
+	width: 50,
+	height: 50,
+	draw() {
+		ctx.fillStyle = 'green';
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+		ctx.drawImage(avata1, this.x, this.y, this.width, this.height);
+	},
 };
 
 class Cactus {
-    constructor() {
-        this.x = 500;
-        this.y = 200;
-        this.width = 50;
-        this.height = 50;
-    }
-    draw() {
-        ctx.drawImage(obstacle, this.x, this.y, this.width, this.height);
-    }
+	constructor() {
+		this.x = 500;
+		this.y = 200;
+		this.width = 50;
+		this.height = 50;
+	}
+	draw() {
+		ctx.fillStyle = 'red';
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+		ctx.drawImage(obstacle, this.x, this.y, this.width, this.height);
+	}
 }
 
 let timer = 0;
 let cactusArr = [];
+let jumpTimer = 0;
 let animation;
 let jump = false;
-let jumpTimer = 0;
-let gravity = 0.8; // 중력 값
-let jumpHeight = 12; // 점프 높이
+let gameStarted = false; // 추가: 게임 시작 여부 확인
 
-function gameLoop() {
-    animation = requestAnimationFrame(gameLoop);
-    timer++;
+function startGame() {
+	if (!gameStarted) {
+		gameStarted = true;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+		function gameLoop() {
+			animation = requestAnimationFrame(gameLoop);
+			timer++;
 
-    // 120프레임마다 장애물 생성
-    if (timer % 120 === 0) {
-        let cactus = new Cactus();
-        cactusArr.push(cactus);
-    }
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 장애물 이동 및 충돌 검사
-    cactusArr.forEach((el, i, o) => {
-        if (el.x + el.width < 0) {
-            o.splice(i, 1); // 화면을 벗어난 장애물 제거
-        }
-        el.x--;
+			if (timer % 120 === 0) {
+				let cactus = new Cactus();
+				cactusArr.push(cactus);
+			}
 
-        checkCollision(dino, el); // 충돌 검사
+			cactusArr.forEach((el, i, o) => {
+				if (el.x + el.width < 0) {
+					o.splice(i, 1);
+				}
+				el.x--;
 
-        el.draw(); // 장애물 그리기
-    });
+				checkCollision(dino, el);
 
-    // 점프 처리
-    if (jump) {
-        if (dino.y > 120) {
-            dino.y -= jumpHeight; // 점프 높이만큼 올라감
-        } else {
-            jump = false;
-            jumpTimer = 0;
-        }
-    } else {
-        if (dino.y < 200) {
-            dino.y += gravity; // 중력 적용
-        }
-    }
+				el.draw();
+			});
 
-    if (jumpTimer > 50) {
-        jump = false; // 점프 제어 변수 리셋
-    }
+			if (jump == true) {
+				dino.y -= 2;
+				jumpTimer++;
+			} else {
+				if (dino.y < 200) {
+					dino.y += 2;
+					jumpTimer = 0;
+				}
+			}
 
-    dino.draw(); // 공룡 그리기
+			if (jumpTimer > 50) {
+				jump = false;
+			}
+
+			dino.draw();
+		}
+
+		gameLoop();
+	}
 }
 
-gameLoop(); // 게임 루프 시작
-
-// 충돌 검사 함수
+// 충돌
 function checkCollision(dino, cactus) {
-    let xDiff = cactus.x - (dino.x + dino.width);
-    let yDiff = cactus.y - (dino.y + dino.height);
+	let xDiff = cactus.x - (dino.x + dino.width);
+	let yDiff = cactus.y - (dino.y + dino.height);
 
-    if (xDiff < 0 && yDiff < 0) { // 충돌이 발생한 경우
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        cancelAnimationFrame(animation); // 애니메이션 정지
-        alert('Game Over'); // 게임 오버 알림
-    }
+	if (xDiff < 0 && yDiff < 0) {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		cancelAnimationFrame(animation);
+		alert('게임 오버');
+		gameStarted = false; // 게임 종료 후 다시 시작 가능하도록 설정
+	}
 }
 
-// 키 이벤트 처리 (점프)
+document.getElementById('startButton').addEventListener('click', startGame);
+
 document.addEventListener('keydown', function(e) {
-    if (e.code === 'Space' && !jump) { // 점프 중이 아닐 때만 점프 가능
-        jump = true; // 점프 시작
-        jumpTimer = 0; // 점프 타이머 초기화
-    }
+	if (e.code === 'Space' && dino.y >= 200) {
+		jump = true;
+	}
 });

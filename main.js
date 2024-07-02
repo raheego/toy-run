@@ -5,19 +5,20 @@ canvas.width = window.innerWidth - 100;
 canvas.height = window.innerHeight - 100;
 
 let avata1 = new Image();
-avata1.src = '/images/dino.png';
+avata1.src = '/images/avatar.ico';
 let obstacle = new Image();
 obstacle.src = '/images/obstacle.png';
 
-const JUMP_SPEED = 10; // 점프 속도
-const FALL_SPEED = 2 ; // 떨어지는 속도
-let jumpHeight = 60; // 점프 높이 제한
+const filedHeight = 200;
+const JUMP_Height = 15; // 점프 속도
+const GRAVITY = 0.8; // 떨어지는 속도
+let jumpHeightLimit = 100; // 점프 높이 제한
 
 let dino = {
     width: 50,
     height: 50,
     x: 10,
-    y: 200,
+    y: filedHeight,
     draw() {
         ctx.fillStyle = 'green';
         ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -28,10 +29,10 @@ let dino = {
 
 class Cactus {
     constructor() {
-        this.width = 50;
-        this.height = 50;
-        this.x = canvas.width  - this.width;
-        this.y = 200;
+        this.width = 25;
+        this.height = 25;
+        this.x = 500; //canvas.width  - this.width
+        this.y = 225;
     }
     draw() {
         ctx.fillStyle = 'red';
@@ -78,16 +79,16 @@ function gameLoop() {
     });
 
     if (jump) {
-        if (dino.y > jumpHeight) {
-            dino.y -= JUMP_SPEED; // 점프 속도 조절
+        if (dino.y > jumpHeightLimit) {
+            dino.y -= JUMP_Height;
         } else {
             jump = false;
             jumpTimer = 0;
         }
         jumpTimer++;
     } else {
-        if (dino.y < 200) { // 다시 떨어지는 위치
-            dino.y += FALL_SPEED;
+        if (dino.y < filedHeight) {
+            dino.y += GRAVITY;
         }
     }
 
@@ -109,7 +110,7 @@ function checkCollision(dino, cactus) {
 }
 
 document.addEventListener('keydown', function(e) {
-    if (e.code === 'Space' && dino.y >= 200 && !jump) {
+    if (e.code === 'Space' && dino.y >= filedHeight && !jump) {
         jump = true;
     }
 });

@@ -97,7 +97,9 @@ function gameLoop() {
         }
     }
 
-    dino.draw(); // 공룡 그리기
+    dino.draw();
+
+    updateScore();
 }
 
 gameLoop();
@@ -112,6 +114,16 @@ function checkCollision(dino, cactus) {
         gameOver();
     }
 }
+
+let score = 0;
+
+function updateScore(){
+    if (timer % obstacleSpawnInterval === 0) {
+        score++;
+        document.querySelector('.score span').textContent = score;
+    }
+}
+
 
 // 게임 오버 처리
 function gameOver() {
@@ -138,6 +150,7 @@ function resetGame() {
     cactusArr = [];
     jump = false;
     dino.y = groundHeight;
+    score = 0;
 
     // 리셋 버튼 숨기기
     const modal = document.getElementById('gameOverModal');
@@ -145,6 +158,7 @@ function resetGame() {
 
     // 새로운 게임 루프 시작
     gameLoop();
+
 }
 
 // 모달 내 리셋 버튼 클릭 시 호출될 함수

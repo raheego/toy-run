@@ -1,20 +1,23 @@
+// 캔버스 요소와 2D 컨텍스트 가져오기
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
+// 캔버스 크기 설정
 canvas.width = window.innerWidth - 100;
 canvas.height = window.innerHeight - 100;
 
 // 이미지 로드
 let avata1 = new Image();
 avata1.src = '/images/dino.png';
+
 let obstacle = new Image();
 obstacle.src = '/images/obstacle.png';
 
 // 게임 설정
 const filedHeight = 200; // 땅의 높이
 const JUMP_Height = 15; // 점프 높이
+const jumpHeightLimit = 80; // 점프 높이 제한
 const GRAVITY = 1.5; // 중력 (숫자가 클수록 빠르게 떨어짐)
-let jumpHeightLimit = 80; // 점프 높이 제한 (기본값 100)
 
 // 장애물 설정
 const obstacleSpawnInterval = 120; // 장애물 생성 간격 (프레임 수)
@@ -38,8 +41,8 @@ class Cactus {
     constructor() {
         this.width = 25;
         this.height = 25;
-        this.x = canvas.width - this.width;
-        this.y = 225;
+        this.x = canvas.width - this.width; // 오른쪽 끝에서 시작
+        this.y = 225; // 고정된 y 위치
     }
     draw() {
         // 장애물 그리기
@@ -60,6 +63,7 @@ function gameLoop() {
     animation = requestAnimationFrame(gameLoop);
     timer++;
 
+    // 캔버스 클리어
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 장애물 생성

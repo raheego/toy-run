@@ -1,5 +1,12 @@
-
-/* 모달 스타일 */
+#wrap{position:relative;}
+.ground {
+	position: absolute;
+	left:0;
+	right:0;
+	top: 249px;
+	border: 1px solid #333;
+	opacity: 0.6;
+}
 .modal {
 	display: none;
 	position: fixed;

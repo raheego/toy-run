@@ -34,6 +34,20 @@ const dino = {
 	draw() {
 		ctx.drawImage(avatarImage, this.x, this.y, this.width, this.height);
 	},
+	updatePosition(){
+		// 점프 로직
+		if (jump) {
+			if (this.y > jumpHeightLimit) {
+				this.y -= jumpHeight;
+			} else {
+				jump = false;
+			}
+		} else {
+			if (this.y < groundHeight) {
+				this.y += gravity;
+			}
+		}
+	}
 };
 
 // 장애물 클래스
@@ -44,8 +58,13 @@ class Cactus {
 		this.x = canvas.width - this.width;
 		this.y = 225;
 	}
+
 	draw() {
 		ctx.drawImage(obstacleImage, this.x, this.y, this.width, this.height);
+	}
+
+	updatePosition(speed){
+		this.x -= speed;
 	}
 }
 
@@ -86,25 +105,14 @@ function updateGame() {
 		if (cactus.x + cactus.width < 0) {
 			arr.splice(index, 1); // 화면을 벗어난 장애물 제거
 		}
-		cactus.x -= obstacleSpeed; // 장애물 이동
+		cactus.updatePosition(obstacleSpeed);
 
 		if (checkCollision(dino, cactus)) {
 			gameOver();
 		}
 	});
 
-	// 점프 로직
-	if (jump) {
-		if (dino.y > jumpHeightLimit) {
-			dino.y -= jumpHeight;
-		} else {
-			jump = false;
-		}
-	} else {
-		if (dino.y < groundHeight) {
-			dino.y += gravity;
-		}
-	}
+	dino.updatePosition();
 }
 
 function drawGame() {

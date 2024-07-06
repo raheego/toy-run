@@ -22,7 +22,8 @@ const gravity = 1.5; // 중력 (숫자가 클수록 빠르게 떨어짐)
 // 장애물 설정
 const obstacleSpawnInterval = 120; // 장애물 생성 간격 (프레임 수)
 const obstacleSpawnProbability = 0.5; // 장애물 생성 확률 (0.5는 50%)
-const obstacleSpeed = 2; // 장애물 이동 속도 (픽셀 단위)
+let obstacleSpeed = 2; // 장애물 이동 속도 (픽셀 단위)
+const obstacleSpeedIncrease = 0.1; // 장애물 이동 속도 증가율
 
 // 플레이어 (공룡) 설정
 const dino = {
@@ -31,7 +32,6 @@ const dino = {
     x: 10,
     y: groundHeight,
     draw() {
-        // 공룡 그리기
         ctx.drawImage(avatarImage, this.x, this.y, this.width, this.height);
     },
 };
@@ -41,11 +41,10 @@ class Cactus {
     constructor() {
         this.width = 25;
         this.height = 25;
-        this.x = canvas.width - this.width; // 오른쪽 끝에서 시작
-        this.y = 225; // 고정된 y 위치
+        this.x = canvas.width - this.width;
+        this.y = 225;
     }
     draw() {
-        // 장애물 그리기
         ctx.drawImage(obstacleImage, this.x, this.y, this.width, this.height);
     }
 }
@@ -55,15 +54,25 @@ let timer = 0;
 let cactusArr = [];
 let animation;
 let jump = false;
+let score = 0;
+
 
 // 게임 루프
 function gameLoop() {
     animation = requestAnimationFrame(gameLoop);
     timer++;
 
-    // 캔버스 클리어
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateGame(); // 게임 상태 업데이트
+    drawGame();   // 게임 그리기
+    updateScore(); // 점수 업데이트
 
+     // 일정 프레임마다 장애물 속도 증가
+     if (timer % 1000 === 0) { // 예시로 1000프레임마다 증가
+        obstacleSpeed += obstacleSpeedIncrease;
+    }
+}
+
+function updateGame() {
     // 장애물 생성
     if (timer % obstacleSpawnInterval === 0) {
         if (Math.random() < obstacleSpawnProbability) {
@@ -79,9 +88,9 @@ function gameLoop() {
         }
         cactus.x -= obstacleSpeed; // 장애물 이동
 
-        checkCollision(dino, cactus); // 충돌 체크
-
-        cactus.draw();
+        if (checkCollision(dino, cactus)) {
+            gameOver();
+        }
     });
 
     // 점프 로직
@@ -96,26 +105,20 @@ function gameLoop() {
             dino.y += gravity;
         }
     }
+}
 
+function drawGame() {
+    // 캔버스 클리어
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 플레이어 그리기
     dino.draw();
 
-    updateScore();
+    // 장애물 그리기
+    cactusArr.forEach(cactus => {
+        cactus.draw();
+    });
 }
-
-gameLoop();
-
-// 충돌 체크
-function checkCollision(dino, cactus) {
-    const xDiff = cactus.x - (dino.x + dino.width);
-    const yDiff = cactus.y - (dino.y + dino.height);
-
-    if (xDiff < 0 && yDiff < 0) {
-        // 충돌 발생 시 게임 오버
-        gameOver();
-    }
-}
-
-let score = 0;
 
 function updateScore(){
     if (timer % obstacleSpawnInterval === 0) {
@@ -124,6 +127,13 @@ function updateScore(){
     }
 }
 
+// 충돌 체크
+function checkCollision(dino, cactus) {
+    const xDiff = cactus.x - (dino.x + dino.width);
+    const yDiff = cactus.y - (dino.y + dino.height);
+
+    return xDiff < 0 && yDiff < 0;
+}
 
 // 게임 오버 처리
 function gameOver() {
@@ -151,14 +161,14 @@ function resetGame() {
     jump = false;
     dino.y = groundHeight;
     score = 0;
+    obstacleSpeed = 2;
 
-    // 리셋 버튼 숨기기
+    // 모달
     const modal = document.getElementById('gameOverModal');
     modal.style.display = 'none';
 
     // 새로운 게임 루프 시작
     gameLoop();
-
 }
 
 // 모달 내 리셋 버튼 클릭 시 호출될 함수
@@ -177,3 +187,6 @@ document.addEventListener('keyup', function(e) {
         jump = false;
     }
 });
+
+// 초기 게임 시작
+gameLoop();

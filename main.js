@@ -13,6 +13,9 @@ avatarImage.src = '/images/dino.png';
 const obstacleImage = new Image();
 obstacleImage.src = '/images/obstacle.png';
 
+const coinImage = new Image();
+coinImage.src = '/images/coin.jpg'
+
 // 게임 설정
 const groundHeight = 200; // 땅의 높이
 const jumpHeight = 15; // 점프 높이
@@ -24,6 +27,11 @@ const obstacleSpawnInterval = 120; // 장애물 생성 간격 (프레임 수)
 const obstacleSpawnProbability = 0.5; // 장애물 생성 확률 (0.5는 50%)
 let obstacleSpeed = 2; // 장애물 이동 속도 (픽셀 단위)
 const obstacleSpeedIncrease = 0.1; // 장애물 이동 속도 증가율
+
+
+// 동전 설정
+const coinSpawnInterval = 150; // 동전 생성 간격 (프레임 수)
+const coinSpawnProbability = 0.3; // 동전 생성 확률 (0.3는 30%)
 
 // 플레이어 (공룡) 설정
 const dino = {
@@ -68,9 +76,29 @@ class Cactus {
 	}
 }
 
+// 동전
+class Coin {
+	constructor(){
+		this.width = 25;
+		this.height = 25;
+		this.x = canvas.width - this.width;
+		this.y = 150;
+	}
+
+	draw(){
+		ctx.drawImage(coinImage, this.x, this.y, this.width, this.height);
+	}
+
+	updatePosition(speed){
+		this.x -= speed;
+	}
+}
+
+
 // 게임 상태 관리
 let timer = 0;
 let cactusArr = [];
+let coinArr = [];
 let animation;
 let jump = false;
 let score = 0;
@@ -100,6 +128,14 @@ function updateGame() {
 		}
 	}
 
+	// 동전 생성
+	if (timer % coinSpawnInterval === 0) {
+		if (Math.random() < coinSpawnProbability) {
+			let coin = new Coin();
+			coinArr.push(coin);
+		}
+	}
+
 	// 장애물 이동 및 충돌 체크
 	cactusArr.forEach((cactus, index, arr) => {
 		if (cactus.x + cactus.width < 0) {
@@ -109,6 +145,19 @@ function updateGame() {
 
 		if (checkCollision(dino, cactus)) {
 			gameOver();
+		}
+	});
+
+	// 동전 충돌 체크
+	coinArr.forEach((coin, index, arr) => {
+		if (coin.x + coin.width < 0) {
+			arr.splice(index, 1); // 화면을 벗어난 장애물 제거
+		}
+		coin.updatePosition(obstacleSpeed);
+
+		if (checkCollision(dino, coin)) {
+			arr.splice(index, 1); // 충돌한 동전 제거
+			score += 5;
 		}
 	});
 
@@ -125,6 +174,11 @@ function drawGame() {
 	// 장애물 그리기
 	cactusArr.forEach(cactus => {
 		cactus.draw();
+	});
+
+	// 동전 그리기 추가
+	coinArr.forEach(coin => {
+		coin.draw();
 	});
 }
 
@@ -166,6 +220,7 @@ function resetGame() {
 	// 변수 초기화
 	timer = 0;
 	cactusArr = [];
+	coinArr = [];
 	jump = false;
 	dino.y = groundHeight;
 	score = 0;

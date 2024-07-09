@@ -82,7 +82,8 @@ class Coin {
 		this.width = 25;
 		this.height = 25;
 		this.x = canvas.width - this.width;
-		this.y = 150;
+		// this.y =  Math.random() * (270 - this.height); ;
+		this.y = 100;
 	}
 
 	draw(){
@@ -206,6 +207,7 @@ function gameOver() {
 
 	// 모달 닫기 버튼
 	const closeModal = document.querySelector('.close');
+
 	closeModal.addEventListener('click', function() {
 		modal.style.display = 'none';
 		resetGame();

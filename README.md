@@ -1,7 +1,20 @@
-# 크롬 공룡 게임
+# 공룡 게임
 
 ### 참고
 - 애플코딩 (https://www.youtube.com/watch?v=qkTtmgCjHhM)
+
+### 규칙
+```
+feat: 새로운 기능 구현
+fix: 버그, 오류 해결
+docs: README나 WIKI 등의 문서 작업
+style: 코드가 아닌 스타일 변경을 하는 경우
+refactor: 리팩토링 작업
+test: 테스트 코드 추가, 테스트 코드 리팩토링
+chore: 코드 수정, 내부 파일 수정
+```
+- 그러나 지키지 못하였따.
+
 
 ## 구현화면
 

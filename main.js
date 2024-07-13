@@ -38,7 +38,7 @@ const coinSpawnInterval = 150; // 동전 생성 간격 (프레임 수)
 const coinSpawnProbability = 0.3; // 동전 생성 확률 (0.3는 30%)
 
 // 플레이어 (공룡) 설정
-const dino = {
+const player = {
 	width: 50,
 	height: 50,
 	x: 10,
@@ -148,7 +148,7 @@ function updateGame() {
 		}
 		cactus.updatePosition(obstacleSpeed);
 
-		if (checkCollision(dino, cactus)) {
+		if (checkCollision(player, cactus)) {
 			gameOver();
 		}
 	});
@@ -160,13 +160,13 @@ function updateGame() {
 		}
 		coin.updatePosition(obstacleSpeed);
 
-		if (checkCollision(dino, coin)) {
+		if (checkCollision(player, coin)) {
 			arr.splice(index, 1); // 충돌한 동전 제거
 			score += 5;
 		}
 	});
 
-	dino.updatePosition();
+	player.updatePosition();
 }
 
 function drawGame() {
@@ -174,7 +174,7 @@ function drawGame() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	// 플레이어 그리기
-	dino.draw();
+	player.draw();
 
 	// 장애물 그리기
 	cactusArr.forEach(cactus => {
@@ -195,9 +195,9 @@ function updateScore() {
 }
 
 // 충돌 체크
-function checkCollision(dino, object) {
-	const xDiff = object.x - (dino.x + dino.width);
-	const yDiff = object.y - (dino.y + dino.height);
+function checkCollision(player, object) {
+	const xDiff = object.x - (player.x + player.width);
+	const yDiff = object.y - (player.y + player.height);
 
 	return xDiff < 0 && yDiff < 0;
 }
@@ -228,7 +228,7 @@ function resetGame() {
 	cactusArr = [];
 	coinArr = [];
 	jump = false;
-	dino.y = groundHeight;
+	player.y = groundHeight;
 	score = 0;
 	obstacleSpeed = 2;
 

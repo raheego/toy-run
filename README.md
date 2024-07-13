@@ -6,7 +6,8 @@
 ## 구현화면
 
 ### ver2 추가 업데이트 사항
-![image](https://github.com/raheego/toy-run/assets/54056684/6aa84181-2246-4918-9a45-ecb592180dee)
+https://github.com/user-attachments/assets/ae85dc8a-4335-4c26-b509-4902d73d74fc
+
 ```
 - 게임 리셋 버튼 추가: 게임 오버 모달에 리셋 버튼을 추가하고, 클릭 시 게임 초기화
 - 게임 속도 점진적 증가: 일정 시간이 지날 때마다 장애물의 이동 속도가 증가

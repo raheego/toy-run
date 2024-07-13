@@ -3,39 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-	<link rel="stylesheet" href="./style.css">
+    <title>toRun</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-	<div id="wrap">
-		<div class="select-player" style="display:none">
-			<h2>캐릭터를 선택하세요</h2>
+    <div id="wrap">
+        <div class="select-player">
+            <h2>캐릭터를 선택하세요</h2>
+            <div>
+                <button id="player1">
+                    <img src="./images/player1.png" alt="플레이어">
+                </button>
+                <button id="player2">
+                    <img src="./images/player2.png" alt="플레이어">
+                </button>
+            </div>
+        </div>
 
-			<div>
-				<button id="player01">
-					<img src="./images/player1.png" alt="">
-				</button>
-				<button id="player02">
-					<img src="./images/player2.png" alt="">
-				</button>
-			</div>
-		</div>
+        <canvas id="canvas"></canvas>
 
-		<canvas id="canvas"></canvas>
+        <div class="score">score : <span>0</span></div>
+        <div class="ground"></div>
 
-		<div class="score">score : <span>0</span></div>
-		<div class="ground"></div>
-
-		<!-- 모달 창 -->
-		<div id="gameOverModal" class="modal">
-			<div class="modal-content">
-				<h2>게임 오버</h2>
-				<p>게임을 다시 시작하려면 아래 버튼을 클릭하세요.</p>
-				<button id="resetModalButton">게임 리셋</button>
-				<span class="close">X</span>
-			</div>
-		</div>
-	</div>
+        <!-- 모달 창 -->
+        <div id="gameOverModal" class="modal">
+            <div class="modal-content">
+                <h2>게임 오버</h2>
+                <p>게임을 다시 시작하려면 아래 버튼을 클릭하세요.</p>
+                <button id="resetModalButton">게임 리셋</button>
+                <span class="close">X</span>
+            </div>
+        </div>
+    </div>
 
     <script src="main.js"></script>
 </body>

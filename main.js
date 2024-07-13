@@ -7,14 +7,19 @@ canvas.width = window.innerWidth - 100;
 canvas.height = window.innerHeight - 100;
 
 // 이미지 로드
+const avatarImages = {
+	player1: './images/player1.png',
+	player2: './images/player2.png'
+};
+let selectedAvatar = null;
+
 const avatarImage = new Image();
-avatarImage.src = '/images/dino.png';
 
 const obstacleImage = new Image();
-obstacleImage.src = '/images/obstacle.png';
+obstacleImage.src = './images/obstacle.png';
 
 const coinImage = new Image();
-coinImage.src = '/images/coin.jpg'
+coinImage.src = './images/coin.jpg';
 
 // 게임 설정
 const groundHeight = 200; // 땅의 높이
@@ -28,7 +33,6 @@ const obstacleSpawnProbability = 0.5; // 장애물 생성 확률 (0.5는 50%)
 let obstacleSpeed = 2; // 장애물 이동 속도 (픽셀 단위)
 const obstacleSpeedIncrease = 0.1; // 장애물 이동 속도 증가율
 
-
 // 동전 설정
 const coinSpawnInterval = 150; // 동전 생성 간격 (프레임 수)
 const coinSpawnProbability = 0.3; // 동전 생성 확률 (0.3는 30%)
@@ -40,9 +44,12 @@ const dino = {
 	x: 10,
 	y: groundHeight,
 	draw() {
+		if (selectedAvatar) {
+			avatarImage.src = selectedAvatar;
+		}
 		ctx.drawImage(avatarImage, this.x, this.y, this.width, this.height);
 	},
-	updatePosition(){
+	updatePosition() {
 		// 점프 로직
 		if (jump) {
 			if (this.y > jumpHeightLimit) {
@@ -71,30 +78,28 @@ class Cactus {
 		ctx.drawImage(obstacleImage, this.x, this.y, this.width, this.height);
 	}
 
-	updatePosition(speed){
+	updatePosition(speed) {
 		this.x -= speed;
 	}
 }
 
-// 동전
+// 동전 클래스
 class Coin {
-	constructor(){
+	constructor() {
 		this.width = 25;
 		this.height = 25;
 		this.x = canvas.width - this.width;
-		// this.y =  Math.random() * (270 - this.height); ;
 		this.y = 100;
 	}
 
-	draw(){
+	draw() {
 		ctx.drawImage(coinImage, this.x, this.y, this.width, this.height);
 	}
 
-	updatePosition(speed){
+	updatePosition(speed) {
 		this.x -= speed;
 	}
 }
-
 
 // 게임 상태 관리
 let timer = 0;
@@ -103,7 +108,6 @@ let coinArr = [];
 let animation;
 let jump = false;
 let score = 0;
-
 
 // 게임 루프
 function gameLoop() {
@@ -152,7 +156,7 @@ function updateGame() {
 	// 동전 충돌 체크
 	coinArr.forEach((coin, index, arr) => {
 		if (coin.x + coin.width < 0) {
-			arr.splice(index, 1); // 화면을 벗어난 장애물 제거
+			arr.splice(index, 1); // 화면을 벗어난 동전 제거
 		}
 		coin.updatePosition(obstacleSpeed);
 
@@ -177,13 +181,13 @@ function drawGame() {
 		cactus.draw();
 	});
 
-	// 동전 그리기 추가
+	// 동전 그리기
 	coinArr.forEach(coin => {
 		coin.draw();
 	});
 }
 
-function updateScore(){
+function updateScore() {
 	if (timer % obstacleSpawnInterval === 0) {
 		score++;
 		document.querySelector('.score span').textContent = score;
@@ -191,9 +195,9 @@ function updateScore(){
 }
 
 // 충돌 체크
-function checkCollision(dino, cactus) {
-	const xDiff = cactus.x - (dino.x + dino.width);
-	const yDiff = cactus.y - (dino.y + dino.height);
+function checkCollision(dino, object) {
+	const xDiff = object.x - (dino.x + dino.width);
+	const yDiff = object.y - (dino.y + dino.height);
 
 	return xDiff < 0 && yDiff < 0;
 }
@@ -208,7 +212,7 @@ function gameOver() {
 	// 모달 닫기 버튼
 	const closeModal = document.querySelector('.close');
 
-	closeModal.addEventListener('click', function() {
+	closeModal.addEventListener('click', function () {
 		modal.style.display = 'none';
 		resetGame();
 	});
@@ -241,17 +245,36 @@ const resetModalButton = document.getElementById('resetModalButton');
 resetModalButton.addEventListener('click', resetGame);
 
 // 점프 제어
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
 	if (e.code === 'Space') {
 		jump = true;
 	}
 });
 
-document.addEventListener('keyup', function(e) {
+document.addEventListener('keyup', function (e) {
 	if (e.code === 'Space') {
 		jump = false;
 	}
 });
 
-// 초기 게임 시작
-gameLoop();
+// 플레이어 선택 버튼 클릭 이벤트를 효율적으로 처리하는 함수
+function setupPlayerSelection() {
+	const playerButtons = document.querySelectorAll('.select-player button');
+	playerButtons.forEach(button => {
+		button.addEventListener('click', function () {
+			selectedAvatar = avatarImages[this.id];
+			startGame();
+		});
+	});
+}
+
+function startGame() {
+	document.querySelector('.select-player').style.display = 'none';
+	canvas.style.display = 'block';
+	document.querySelector('.score').style.display = 'block';
+	document.querySelector('.ground').style.display = 'block';
+	gameLoop();
+}
+
+// 초기 설정
+setupPlayerSelection();

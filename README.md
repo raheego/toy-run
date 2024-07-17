@@ -18,6 +18,14 @@ chore: 코드 수정, 내부 파일 수정
 
 ## 구현화면
 
+### ver3
+<img width="528" alt="image" src="https://github.com/user-attachments/assets/11dd48c0-13d1-4f31-87cb-87431121c294">
+
+```
+- 플레이어 캐릭터 선택 기능 추가
+- 캐릭터 이미지 추가 
+```
+
 ### ver2 추가 업데이트 사항
 https://github.com/user-attachments/assets/ae85dc8a-4335-4c26-b509-4902d73d74fc
 

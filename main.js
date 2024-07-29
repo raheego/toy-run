@@ -8,8 +8,11 @@ canvas.height = window.innerHeight - 100;
 
 // 이미지 로드
 const avatarImages = {
-	player1: './images/player1.png',
-	player2: './images/player2.png'
+	player1: './images/player1.webp',
+	player2: './images/player2.webp',
+	player3: './images/player3.webp',
+	player4: './images/player4.webp',
+	player5: './images/player5.webp'
 };
 let selectedAvatar = null;
 
@@ -260,6 +263,7 @@ document.addEventListener('keyup', function (e) {
 // 플레이어 선택 버튼 클릭 이벤트를 효율적으로 처리하는 함수
 function setupPlayerSelection() {
 	const playerButtons = document.querySelectorAll('.select-player button');
+	document.querySelector('.score').style.display = 'none';
 	playerButtons.forEach(button => {
 		button.addEventListener('click', function () {
 			selectedAvatar = avatarImages[this.id];
